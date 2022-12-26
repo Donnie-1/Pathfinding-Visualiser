@@ -3,22 +3,26 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 100%;
 }
 
 .grid { 
     margin: auto;
     display: grid;
-    grid-template-columns: repeat(35, minmax(50px, 0fr));
-    grid-template-rows: repeat(20, 1fr);
+    grid-template-columns: repeat(35, minmax(50px, 1fr));
+    grid-template-rows: repeat(20);
 }
 
 .grid-item { 
     width: 50px;
     height: 50px;
-    background-color: lightgrey;
+    background-color: white;
     border: 1px solid grey;
-    display: inline-block;
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+    
+
 }
     
 .grid-item:hover {
@@ -27,4 +31,12 @@
 
 .grid-item:active {
     background-color: lightblue;
+}
+
+.play-button { 
+    display: flex;
+    align-items: center;
+    height: 100%;
+    width: 50px; 
+    background-color: #1565C0;
 }

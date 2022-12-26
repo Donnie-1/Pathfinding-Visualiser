@@ -1,43 +1,72 @@
-import React, { Component } from 'react';
-import Node from './Node';
+import { useState } from 'react';
 import "./Grid.css"; 
+import {shortestPath} from './Dijkstra.js'; 
 
-export default class Grid extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      grid: Array(20)
-        .fill()
-        .map((_, rowIndex) =>
-          Array(35)
-            .fill()
-            .map((_, colIndex) => new Node(rowIndex, colIndex)),
-        ),
-    };
+export default function Grid() {
+  const [grid, setGrid] = useState(() => {
+    return Array(35)
+      .fill(null)
+      .map(() => Array(20).fill(null));
+  });
+
+  const [startNode, setStartNode] = useState(null);
+  const [endNode, setEndNode] = useState(null);
+
+  function updateCell(row, col) {
+    let value = ""; 
+
+    if (!startNode) {
+      setStartNode([row, col]);
+      value = String.fromCharCode(9654);
+    } else if (!endNode) {
+      setEndNode([row, col]);
+      value = String.fromCharCode(9726); 
+    }
+
+    setGrid(prevGrid => {
+      const newGrid = [...prevGrid];
+      newGrid[row][col] = value;
+      return newGrid;
+    });
   }
 
-  render() {
-    return (
-      <div className="grid-parent">
-        <div className="grid">
-          {this.state.grid.map((row, rowIndex) => (
-            <div key={rowIndex}>
-              {row.map((col, colIndex) => (
-                <Node 
-                  row={row}
-                  col={col}
+  function highlightShortestPath() {
+    const path = shortestPath(grid, startNode, endNode);
 
+    setGrid(prevGrid => {
+      const newGrid = [...prevGrid];
+      for (const node of path) {
+        newGrid[node[0]][node[1]] = 'O';
+      }
+      return newGrid;
+    });
+  }
 
-                  >
-
-                </Node>
-              ))}
-            </div>
-          ))}
-        </div>
+  return (
+    <>
+    <div className='grid-parent'>
+      <div className='grid'>
+        {grid.map((row, rowIndex) => (
+          <div key={rowIndex} >
+            {row.map((cell, colIndex) => (
+              <div className='grid-item'
+                key={colIndex}
+                onClick={() => {
+                  updateCell(rowIndex, colIndex);
+                }}
+              >
+                {cell}
+              </div>
+            ))}
+          </div>
+        ))}
       </div>
-    );
-  }
+    </div>
+    <div className='play-button'
+      onClick={() => {
+        highlightShortestPath();
+      }}
+      >Play</div>
+    </>
+  );
 }
-
-
