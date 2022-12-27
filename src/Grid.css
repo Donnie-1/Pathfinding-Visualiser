@@ -10,7 +10,7 @@
     display: grid;
     grid-template-columns: repeat(50, minmax(10px, 1fr));
     grid-template-rows: repeat(30);
-
+    padding: 2px;
 }
 
 .cell { 
