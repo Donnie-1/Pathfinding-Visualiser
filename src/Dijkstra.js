@@ -2,7 +2,7 @@
 export function shortestPath(grid, startNode, endNode) {
   const colSize = 50; 
   const rowSize = 30;
-  
+  const visitedNodes = []  
   // Initialize the distances and previous nodes for each cell
   const distances = Array(colSize)
     .fill(null)
@@ -22,6 +22,7 @@ export function shortestPath(grid, startNode, endNode) {
     }
   }
 
+  let flag = true; 
   // Iterate over the unvisited nodes until all nodes have been visited
   while (unvisitedNodes.size > 0) {
     // Find the node with the minimum distance
@@ -42,9 +43,18 @@ export function shortestPath(grid, startNode, endNode) {
     if (minDistanceNode === null) {
       break; 
     }
+
+
     const neighbors = getNeighbors(grid, minDistanceNode, colSize, rowSize);
     
     for (const neighbor of neighbors) {
+      if (neighbor[0] === endNode[0] && neighbor[1] === endNode[1]) {
+        flag = false;
+      }
+      if (flag) {
+        visitedNodes.push(neighbor);
+      }
+      
       const distance = distances[minDistanceNode[0]][minDistanceNode[1]] + 1;
       if (
         distance < distances[neighbor[0]][neighbor[1]] &&
@@ -59,12 +69,20 @@ export function shortestPath(grid, startNode, endNode) {
   // Trace the shortest path from the end node to the start node
   const shortestPath = [endNode];
   let currentNode = endNode;
+  if (currentNode === null) { 
+    return [null, visitedNodes];
+  }
   while (currentNode[0] !== startNode[0] || currentNode[1] !== startNode[1]) {
     currentNode = prevNodes[currentNode[0]][currentNode[1]];
     shortestPath.unshift(currentNode);
+
+    if (currentNode === null) { 
+      return [null, visitedNodes];
+    }
   }
-  return shortestPath
+  return [shortestPath, visitedNodes];
 }
+
 function getNeighbors(grid, node, colSize, rowSize) {
   const neighbors = [];
   const row = node[0];
@@ -85,8 +103,10 @@ function getNeighbors(grid, node, colSize, rowSize) {
   }
   return neighbors;
 }
-let a = [];
-export function trace(arr) { 
-  a.push(arr); 
-  return a; 
+
+
+function doSetTimeout(i) {
+  setTimeout(function() {
+    alert(i);
+  }, 10000);
 }

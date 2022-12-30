@@ -1,47 +1,105 @@
 
 .grid-parent { 
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .grid { 
-    margin:  auto;
-    display: grid;
-    grid-template-columns: repeat(50, minmax(10px, 1fr));
-    grid-template-rows: repeat(30);
+  display: grid;
+  grid-template-columns: repeat(50, 1fr);
+  grid-template-rows: repeat(30);
+
 }
 
 .cell { 
-    width: 30px;
-    height: 30px;
-    background-color: white;
-    border-right: 1px solid lightblue;
-    border-top: 1px solid lightblue;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    
-
+  width: 30px;
+  height: 30px;
+  background-color: #EDF2F4;
+  outline: 1px solid lightblue;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-    
-.cell:hover {
-    background-color: white;
-}
-
+  
 .wall { 
-    width: 30px;
-    height: 30px;
-    border-right: 1px solid black;
-    border-top: 1px solid black;
+  width: 30px;
+  height: 30px;
+  outline: 1px solid lightblue;;
+  /* border-top: 1px solid black; */
+  transition: background-color 0.5s ease-out;;
+  animation: grow 5s forwards;
+  background-color: black;
 }
+
+.wall:before {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);  /* Start with a very small scale */
+  border-radius: 50%;  /* Make it a circle */
+  background-color: black;  /* Set the desired color */
+  transition: transform 0.5s ease-in-out;  /* Animate the scale change */
+  animation: grow 5s forwards;
+}
+
 
 .path { 
-    width: 29px;
-    height: 29px;
-    background-color: yellow;
-    border: 1px solid yellow;;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  width: 30px;
+  height: 30px;
+  outline: 1px solid lightblue;
+  background-color: yellow;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.visitedPath { 
+outline: 1px solid lightblue;
+width: 30px;
+height: 30px;
+display: flex;
+align-items: center;
+justify-content: center;
+
+  /* border-bottom: 1px solid lightblue; */
+}
+.visitedNodePurple{
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  animation-name: visitedStartNodePurpleAnimation;
+  animation-duration: 2.0s;
+  animation-timing-function: ease-out;
+  animation-delay: 0;
+  animation-direction: alternate;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+  animation-play-state: running;
+}
+
+@keyframes visitedStartNodePurpleAnimation {
+  0% {
+    transform: scale(.3);
+    background-color: rgba(41, 4, 24, 0.75);
+    border-radius: 100%;
+
+  }
+
+  50% {
+    background-color: rgba(97, 0, 20, 0.75);
+    
+  }
+
+  75% {
+    transform: scale(1.2);
+    background-color: rgba(216, 5, 141, 0.75)
+  }
+
+  100% {
+    transform: scale(1.0);
+    background-color: rgba(178, 67, 255, 0.75);
+
+
+  }
 }

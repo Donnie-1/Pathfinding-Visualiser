@@ -2,7 +2,7 @@ import { useState } from 'react';
 import "./Grid.css"; 
 import {shortestPath} from './Dijkstra.js'; 
 import {Nav} from './Nav.js'; 
-import {trace} from './Dijkstra.js'; 
+
 
 
 const Cell = ({ row, col, value, style, className, updateNode, onMouseDown, onMouseUp}) => {
@@ -17,7 +17,7 @@ const Cell = ({ row, col, value, style, className, updateNode, onMouseDown, onMo
     <div
       style={style}
       className={className}
-      onMouseOver={() => { updateNode(row, col, "black", "wall", false) }}
+      onMouseOver={() => { updateNode(row, col, "wall", false) }}
       onMouseDown={() => { onMouseDown() }}
       onMouseUp={() => { onMouseUp() }}
     >
@@ -33,12 +33,11 @@ function Grid() {
       .map(() => Array(30).fill({ value: '', style: {}, className: 'cell', isWall: false }));
   });
 
-  function updateNode(row, col, color, className, pathCondition) {
+  function updateNode(row, col, className, pathCondition) {
     if (isHolding || pathCondition) {  
       setGrid(() => {
         const newGrid = grid.slice();
         newGrid[row][col] = {
-          style: { backgroundColor: `${color}` },
           className: `${className}`,
           isWall: true, 
         };
@@ -57,20 +56,49 @@ function Grid() {
     setIsHolding(false);
   }
 
-  function highlightShortestPath() {
-    const path = shortestPath(grid, [7, 15], [42, 15]);
 
-    let i = 0;
-    const interval = setInterval(() => {
-      if (i === path.length) {
-        clearInterval(interval);
-        return;
+  function highlight1(visitedNodes) { 
+    for (let i = 0; i < visitedNodes.length; i++) {
+      const [row, col] = visitedNodes[i];
+      if (grid[row][col].isWall) {
+        continue;
       }
-      const node = path[i];
-      console.log(node)
-      updateNode(node[0], node[1], "yellow", "path", true);
-      i++;
-    }, 100);
+      if (row === 42 && col === 15) { 
+        break; 
+      }
+      setTimeout(() => {
+        if (row !== 7 || col !== 15) {
+        updateNode(row, col, "visitedPath visitedNodePurple", true);
+        }
+      }, 5 * i);
+    
+    }
+    return; 
+  }
+  
+  function highlight2(path) { 
+   
+    for (let i = 0; i < path.length; i++) {
+      const [row, col] = path[i];
+  
+      setTimeout(() => {
+        updateNode(row, col, "path", true);
+      }, 20 * i);
+    
+    }
+    return; 
+  }
+  
+  function highlightShortestPath() {
+    const [path, visitedNodes] = shortestPath(grid, [7, 15], [42, 15]);
+    if (path === null){
+      alert("No path found");
+      return;
+    }
+    highlight1(visitedNodes);
+    setTimeout(() => {
+      highlight2(path);
+    }, visitedNodes.length * 5);
   }
 
   return (
@@ -102,6 +130,7 @@ function Grid() {
     </>
   );
 };
+
 
 export default Grid;
 
