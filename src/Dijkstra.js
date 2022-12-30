@@ -1,7 +1,5 @@
 
-export function shortestPath(grid, startNode, endNode) {
-  const colSize = 50; 
-  const rowSize = 30;
+export function shortestPath(grid, startNode, endNode, colSize, rowSize) {
   const visitedNodes = []  
   // Initialize the distances and previous nodes for each cell
   const distances = Array(colSize)
@@ -102,11 +100,4 @@ function getNeighbors(grid, node, colSize, rowSize) {
     neighbors.push([row, col + 1]);
   }
   return neighbors;
-}
-
-
-function doSetTimeout(i) {
-  setTimeout(function() {
-    alert(i);
-  }, 10000);
 }

@@ -1,25 +1,31 @@
 import { useState } from 'react';
 import "./Grid.css"; 
 import {shortestPath} from './Dijkstra.js'; 
+import {bidirectionalDijkstra} from './BiDijkstra.js';
+import {aStar} from './aStar.js'
 import {Nav} from './Nav.js'; 
+import {DFS} from './DFS.js';
 
 
 
-const Cell = ({ row, col, value, style, className, updateNode, onMouseDown, onMouseUp}) => {
-  if (row === 7 && col === 15) {
-    value = String.fromCharCode(9654)
+function Cell (props, {value, row, col}) {
+
+  if (props.row === props.startNode[0] && props.col === props.startNode[1]) {
+    value =  String.fromCharCode(9654)
   }
-  if (row === 42 && col === 15) {
-    value = String.fromCharCode(9726)
+  if (props.row === props.endNode[0] && props.col === props.endNode[1]) {
+    value = String.fromCharCode(9726);
   }
+  row = props.row;
+  col = props.col;
 
   return (
     <div
-      style={style}
-      className={className}
-      onMouseOver={() => { updateNode(row, col, "wall", false) }}
-      onMouseDown={() => { onMouseDown() }}
-      onMouseUp={() => { onMouseUp() }}
+      style={props.style}
+      className={props.className}
+      onMouseOver={() => { props.updateNode(props.row, props.col, "wall", false) }}
+      onMouseDown={() => { props.onMouseDown() }}
+      onMouseUp={() => { props.onMouseUp() }}
     >
       {value}
     </div>
@@ -27,10 +33,15 @@ const Cell = ({ row, col, value, style, className, updateNode, onMouseDown, onMo
 };
 
 function Grid() {
+  const rowSize = 50; 
+  const colSize = 50;
+  const startNode = [33, 15];
+  const endNode = [40, 25];
+
   const [grid, setGrid] = useState(() => {
-    return Array(50)
+    return Array(colSize)
       .fill(null)
-      .map(() => Array(30).fill({ value: '', style: {}, className: 'cell', isWall: false }));
+      .map(() => Array(rowSize).fill({ value: '', style: {}, className: 'cell', isWall: false, isVisited: false, row: 0, col: 0}));
   });
 
   function updateNode(row, col, className, pathCondition) {
@@ -57,17 +68,17 @@ function Grid() {
   }
 
 
-  function highlight1(visitedNodes) { 
+  function highlightVisited(visitedNodes) { 
     for (let i = 0; i < visitedNodes.length; i++) {
       const [row, col] = visitedNodes[i];
       if (grid[row][col].isWall) {
         continue;
       }
-      if (row === 42 && col === 15) { 
+      if (row === endNode[0] && col === endNode[1]) { 
         break; 
       }
       setTimeout(() => {
-        if (row !== 7 || col !== 15) {
+        if (row !== startNode[0] || col !== startNode[1]) {
         updateNode(row, col, "visitedPath visitedNodePurple", true);
         }
       }, 5 * i);
@@ -76,8 +87,7 @@ function Grid() {
     return; 
   }
   
-  function highlight2(path) { 
-   
+  function highlightPath(path) { 
     for (let i = 0; i < path.length; i++) {
       const [row, col] = path[i];
   
@@ -90,14 +100,15 @@ function Grid() {
   }
   
   function highlightShortestPath() {
-    const [path, visitedNodes] = shortestPath(grid, [7, 15], [42, 15]);
+    const [path, b] =  shortestPath(grid, startNode, endNode, colSize, rowSize)
+    const  visitedNodes=  DFS(grid, startNode, endNode, colSize, rowSize)
     if (path === null){
       alert("No path found");
       return;
     }
-    highlight1(visitedNodes);
+    highlightVisited(visitedNodes);
     setTimeout(() => {
-      highlight2(path);
+      highlightPath(path);
     }, visitedNodes.length * 5);
   }
 
@@ -114,6 +125,8 @@ function Grid() {
                 key={colIndex}
                 row={rowIndex}
                 col={colIndex}
+                startNode={startNode}
+                endNode={endNode}
                 value={cell.value}
                 style={cell.style}
                 className={cell.className}
