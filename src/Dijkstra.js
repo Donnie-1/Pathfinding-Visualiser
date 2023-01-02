@@ -44,7 +44,6 @@ export function shortestPath(grid, startNode, endNode, colSize, rowSize) {
 
 
     const neighbors = getNeighbors(grid, minDistanceNode, colSize, rowSize);
-    
     for (const neighbor of neighbors) {
       if (neighbor[0] === endNode[0] && neighbor[1] === endNode[1]) {
         flag = false;
@@ -85,7 +84,7 @@ function getNeighbors(grid, node, colSize, rowSize) {
   const neighbors = [];
   const row = node[0];
   const col = node[1];
-  const wall = grid[row][col].isWall; 
+  const wall = grid[row][col].isWall;
 
   if (row > 0 && (wall === false)) {
     neighbors.push([row - 1, col]);

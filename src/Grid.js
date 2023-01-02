@@ -1,14 +1,12 @@
 import { useState } from 'react';
 import "./Grid.css"; 
 import {shortestPath} from './Dijkstra.js'; 
-import {bidirectionalDijkstra} from './BiDijkstra.js';
-import {aStar} from './aStar.js'
 import {Nav} from './Nav.js'; 
 import {DFS} from './DFS.js';
+import {bidirectionalShortestPath} from './bidirectionalBFS.js';
 
 
-
-function Cell (props, {value, row, col}) {
+function Cell (props, {value}) {
 
   if (props.row === props.startNode[0] && props.col === props.startNode[1]) {
     value =  String.fromCharCode(9654)
@@ -16,14 +14,18 @@ function Cell (props, {value, row, col}) {
   if (props.row === props.endNode[0] && props.col === props.endNode[1]) {
     value = String.fromCharCode(9726);
   }
-  row = props.row;
-  col = props.col;
+
+  if (props.row === 19 && props.col === 20) {
+    value = String.fromCharCode(9726);
+  }
+
+ 
 
   return (
     <div
       style={props.style}
-      className={props.className}
-      onMouseOver={() => { props.updateNode(props.row, props.col, "wall", false) }}
+      className={props.className}                                      // isWall, isVisited, isPath
+      onMouseOver={() => { props.updateNode(props.row, props.col, "wall", [true, false, false]) }}
       onMouseDown={() => { props.onMouseDown() }}
       onMouseUp={() => { props.onMouseUp() }}
     >
@@ -35,22 +37,37 @@ function Cell (props, {value, row, col}) {
 function Grid() {
   const rowSize = 50; 
   const colSize = 50;
-  const startNode = [33, 15];
-  const endNode = [40, 25];
+  const startNode = [20, 15];
+  const endNode = [20, 25];
 
   const [grid, setGrid] = useState(() => {
     return Array(colSize)
       .fill(null)
-      .map(() => Array(rowSize).fill({ value: '', style: {}, className: 'cell', isWall: false, isVisited: false, row: 0, col: 0}));
+      .map(() => Array(rowSize).fill({ 
+        value: '', 
+        style: {}, 
+        className: 'cell', 
+        isWall: false, 
+        isVisited: false, 
+        isPath: false,
+      }));
   });
 
-  function updateNode(row, col, className, pathCondition) {
-    if (isHolding || pathCondition) {  
+  function updateNode(row, col, className, nodeType) {
+    if  (row === startNode[0] && col === startNode[1] || 
+        row === endNode[0] && col === endNode[1]) {
+      return; 
+    }
+ 
+
+    if  (isHolding || nodeType[1]) {  
       setGrid(() => {
         const newGrid = grid.slice();
         newGrid[row][col] = {
           className: `${className}`,
-          isWall: true, 
+          isWall: nodeType[0],
+          isVisited: nodeType[1], 
+          isPath: nodeType[2], 
         };
         return newGrid;
       });
@@ -67,21 +84,33 @@ function Grid() {
     setIsHolding(false);
   }
 
+  const array = [[0,0]]; 
+  function highlightVisited(visitedNodes, endNodes, startNodes) { 
+    console.log(startNodes.values(), endNodes.values())
+    for (const node of endNodes) {
+      if (startNodes.has(node)) {
+        // The searches have intersected at this node
+        console.log(`Intersection found at node: ${node}`);
+        break;
+      }
+    }
 
-  function highlightVisited(visitedNodes) { 
     for (let i = 0; i < visitedNodes.length; i++) {
       const [row, col] = visitedNodes[i];
-      if (grid[row][col].isWall) {
+      if (grid[row][col].isVisited) {
         continue;
       }
       if (row === endNode[0] && col === endNode[1]) { 
         break; 
       }
+      
+      
+
+      array.push([row, col]);
       setTimeout(() => {
-        if (row !== startNode[0] || col !== startNode[1]) {
-        updateNode(row, col, "visitedPath visitedNodePurple", true);
-        }
-      }, 5 * i);
+        
+        updateNode(row, col, "visitedPath visitedNodePurple", [false, true, false]);
+      }, 10*i);
     
     }
     return; 
@@ -92,7 +121,8 @@ function Grid() {
       const [row, col] = path[i];
   
       setTimeout(() => {
-        updateNode(row, col, "path", true);
+          updateNode(row, col, "path", [false, false, true]);
+          
       }, 20 * i);
     
     }
@@ -100,13 +130,17 @@ function Grid() {
   }
   
   function highlightShortestPath() {
-    const [path, b] =  shortestPath(grid, startNode, endNode, colSize, rowSize)
-    const  visitedNodes=  DFS(grid, startNode, endNode, colSize, rowSize)
+    
+    //const [path, b] =  shortestPath(grid, startNode, endNode, colSize, rowSize)
+    let [visitedNodes, endNodes, startNodes] =  bidirectionalShortestPath(grid, startNode, endNode, colSize, rowSize); 
+
+    let path = [[0,1], [1,1]]
+
     if (path === null){
       alert("No path found");
       return;
     }
-    highlightVisited(visitedNodes);
+    highlightVisited(visitedNodes, endNodes, startNodes);
     setTimeout(() => {
       highlightPath(path);
     }, visitedNodes.length * 5);
