@@ -15,12 +15,6 @@ function Cell (props, {value}) {
     value = String.fromCharCode(9726);
   }
 
-  if (props.row === 19 && props.col === 20) {
-    value = String.fromCharCode(9726);
-  }
-
- 
-
   return (
     <div
       style={props.style}
@@ -37,8 +31,8 @@ function Cell (props, {value}) {
 function Grid() {
   const rowSize = 50; 
   const colSize = 50;
-  const startNode = [20, 15];
-  const endNode = [20, 25];
+  const startNode = [10, 25];
+  const endNode = [40, 25];
 
   const [grid, setGrid] = useState(() => {
     return Array(colSize)
@@ -85,32 +79,22 @@ function Grid() {
   }
 
   const array = [[0,0]]; 
-  function highlightVisited(visitedNodes, endNodes, startNodes) { 
-    console.log(startNodes.values(), endNodes.values())
-    for (const node of endNodes) {
-      if (startNodes.has(node)) {
-        // The searches have intersected at this node
-        console.log(`Intersection found at node: ${node}`);
-        break;
-      }
-    }
+  function highlightVisited(visitedNodes) { 
 
     for (let i = 0; i < visitedNodes.length; i++) {
       const [row, col] = visitedNodes[i];
-      if (grid[row][col].isVisited) {
+      if (grid[row][col].isWall) {
         continue;
       }
       if (row === endNode[0] && col === endNode[1]) { 
         break; 
       }
-      
-      
 
       array.push([row, col]);
       setTimeout(() => {
         
         updateNode(row, col, "visitedPath visitedNodePurple", [false, true, false]);
-      }, 10*i);
+      }, 5*i);
     
     }
     return; 
@@ -121,7 +105,7 @@ function Grid() {
       const [row, col] = path[i];
   
       setTimeout(() => {
-          updateNode(row, col, "path", [false, false, true]);
+          updateNode(row, col, "path", [false, true, true]);
           
       }, 20 * i);
     
@@ -132,15 +116,13 @@ function Grid() {
   function highlightShortestPath() {
     
     //const [path, b] =  shortestPath(grid, startNode, endNode, colSize, rowSize)
-    let [visitedNodes, endNodes, startNodes] =  bidirectionalShortestPath(grid, startNode, endNode, colSize, rowSize); 
-
-    let path = [[0,1], [1,1]]
+    const [visitedNodes, path] = bidirectionalShortestPath(grid, startNode, endNode, colSize, rowSize); 
 
     if (path === null){
       alert("No path found");
       return;
     }
-    highlightVisited(visitedNodes, endNodes, startNodes);
+    highlightVisited(visitedNodes, path);
     setTimeout(() => {
       highlightPath(path);
     }, visitedNodes.length * 5);

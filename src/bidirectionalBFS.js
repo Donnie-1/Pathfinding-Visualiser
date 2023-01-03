@@ -1,7 +1,11 @@
+import {shortestPath} from './Dijkstra.js'; 
+
 export function bidirectionalShortestPath(grid, startNode, endNode, colSize, rowSize) {
+    const [path, dead] = shortestPath(grid, startNode, endNode, colSize, rowSize);
+    const midPoint = path[Math.floor(path.length/2)];
     const visitedNodes = []  
-    const visitedNodesSource = new Set()
-    const visitedNodesEnd = new Set()
+    const visitedNodesSource = []
+    const visitedNodesEnd = []
   // Initialize the distances and previous nodes for each cell
   const distances1 = Array(colSize)
     .fill(null)
@@ -26,7 +30,8 @@ export function bidirectionalShortestPath(grid, startNode, endNode, colSize, row
     }
   }
 
-
+  let j = 0;
+  let array = []
   // Iterate over the unvisited nodes until all nodes have been visited or the search meets in the middle
   while (unvisitedNodesStart.size > 0 && unvisitedNodesEnd.size > 0) {
     // Find the node with the minimum distance for the forward search
@@ -39,6 +44,7 @@ export function bidirectionalShortestPath(grid, startNode, endNode, colSize, row
         minDistanceNodeStart = node;
       }
     }
+
 
     // Find the node with the minimum distance for the backward search
     let minDistanceNodeEnd = null;
@@ -54,24 +60,18 @@ export function bidirectionalShortestPath(grid, startNode, endNode, colSize, row
     if ( minDistanceNodeEnd === null || minDistanceNodeStart === null) {
         break; 
     }
-
-    if (visitedNodesSource.has(minDistanceNodeEnd)) {
-        // The searches have intersected at this node
-        console.log(`Intersection found at node: ${minDistanceNodeEnd}`);
-        break;
-      }
-      if (visitedNodesEnd.has(minDistanceNodeStart)) {
-        // The searches have intersected at this node
-        console.log(`Intersection found at node: ${minDistanceNodeStart}`);
-        break;
-      }
-    // Check if the two searches have met in the middle (i.e., if the same node was chosen as the minimum distance node for both searches)
-
-      let array = []
       // Remove the nodes from the unvisited nodes sets
-      unvisitedNodesStart.delete(minDistanceNodeStart);
-      unvisitedNodesEnd.delete(minDistanceNodeEnd);
-      
+    unvisitedNodesStart.delete(minDistanceNodeStart);
+    unvisitedNodesEnd.delete(minDistanceNodeEnd);
+    
+
+    if ((minDistanceNodeEnd[0] === midPoint[0] && minDistanceNodeEnd[1] === midPoint[1]) || 
+        (minDistanceNodeStart[0] === midPoint[0] && minDistanceNodeStart[1] === midPoint[1])) {
+            console.log(midPoint)
+            return [visitedNodes, path]
+    }
+
+
     //   Update the distances and previous nodes for the neighboring nodes in the forward search
       const neighborsStart = getNeighbors(grid, minDistanceNodeStart, colSize, rowSize);
       for (const neighbor of neighborsStart) {
@@ -79,8 +79,9 @@ export function bidirectionalShortestPath(grid, startNode, endNode, colSize, row
             continue;
         }
 
+        visitedNodesSource.push(neighbor);
         visitedNodes.push(neighbor);
-        visitedNodesSource.add(neighbor);
+
         const distance = distances1[minDistanceNodeStart[0]][minDistanceNodeStart[1]] + 1;
         if (
           distance < distances1[neighbor[0]][neighbor[1]] &&
@@ -100,8 +101,9 @@ export function bidirectionalShortestPath(grid, startNode, endNode, colSize, row
             continue;
         }
 
-        visitedNodesEnd.add(neighbor);
+        visitedNodesEnd.push(neighbor);
         visitedNodes.push(neighbor);
+
         const distance = distances2[minDistanceNodeEnd[0]][minDistanceNodeEnd[1]] + 1;
         if (
           distance < distances2[neighbor[0]][neighbor[1]] &&
@@ -110,8 +112,9 @@ export function bidirectionalShortestPath(grid, startNode, endNode, colSize, row
           distances2[neighbor[0]][neighbor[1]] = distance;
         }
       }
+      j++; 
     }
-    return [visitedNodes, visitedNodesEnd, visitedNodesSource];
+    return visitedNodes
 }
     
 
@@ -121,25 +124,16 @@ function getNeighbors(grid, node, colSize, rowSize) {
     const col = node[1];
     const wall = grid[row][col].isWall; 
     
-    // if ((grid[row - 1][col].isVisited) ||
-    //     (grid[row + 1][col].isVisited) ||
-    //     (grid[row][col - 1].isVisited) ||
-    //     (grid[row][col + 1].isVisited) 
-    //     ) { 
-    //         console.log("OVERLAP");
-    //     }
-    
-    
-    if (row > 0 ) {
+    if (row > 0 && (grid[row - 1][col].isWall === false)) {
         neighbors.push([row - 1, col]);
     }
-    if (row < (colSize - 1)) {
+    if (row < (colSize - 1) && (grid[row + 1][col].isWall === false)) {
         neighbors.push([row + 1, col]);
     }
-    if (col > 0 ){ 
+    if (col > 0 && (grid[row][col - 1].isWall === false)){ 
         neighbors.push([row, col - 1]);
     }
-    if (col < (rowSize - 1) ) {
+    if (col < (rowSize - 1) && (grid[row][col + 1].isWall === false) ) {
         neighbors.push([row, col + 1]);
     }
     return neighbors;
