@@ -30,8 +30,9 @@ export function bidirectionalShortestPath(grid, startNode, endNode, colSize, row
     }
   }
 
-  let j = 0;
-  let array = []
+  let startFlag = false; 
+  let endFlag = false;
+ 
   // Iterate over the unvisited nodes until all nodes have been visited or the search meets in the middle
   while (unvisitedNodesStart.size > 0 && unvisitedNodesEnd.size > 0) {
     // Find the node with the minimum distance for the forward search
@@ -64,13 +65,14 @@ export function bidirectionalShortestPath(grid, startNode, endNode, colSize, row
     unvisitedNodesStart.delete(minDistanceNodeStart);
     unvisitedNodesEnd.delete(minDistanceNodeEnd);
     
-
-    if ((minDistanceNodeEnd[0] === midPoint[0] && minDistanceNodeEnd[1] === midPoint[1]) || 
-        (minDistanceNodeStart[0] === midPoint[0] && minDistanceNodeStart[1] === midPoint[1])) {
-            console.log(midPoint)
-            return [visitedNodes, path]
+    for(let i of visitedNodesSource) { 
+      for(let j of visitedNodesEnd) { 
+        if (i[0] === j[0] && i[1] === j[1]) {
+          console.log(i)
+          return [path, visitedNodes]
+        } 
+      }
     }
-
 
     //   Update the distances and previous nodes for the neighboring nodes in the forward search
       const neighborsStart = getNeighbors(grid, minDistanceNodeStart, colSize, rowSize);
@@ -112,9 +114,9 @@ export function bidirectionalShortestPath(grid, startNode, endNode, colSize, row
           distances2[neighbor[0]][neighbor[1]] = distance;
         }
       }
-      j++; 
+
     }
-    return visitedNodes
+    return [path, visitedNodes]
 }
     
 
@@ -122,7 +124,6 @@ function getNeighbors(grid, node, colSize, rowSize) {
     const neighbors = [];
     const row = node[0];
     const col = node[1];
-    const wall = grid[row][col].isWall; 
     
     if (row > 0 && (grid[row - 1][col].isWall === false)) {
         neighbors.push([row - 1, col]);

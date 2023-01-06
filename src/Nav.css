@@ -2,28 +2,34 @@ li {
     list-style-type: none;
 }
 
-
 .nav-bar { 
     display: flex;
     background-color: #14213d;
-    flex-direction: column;
-    position: relative;
-    align-items: center;
     justify-content: center;
-   
+    align-items: center;
+    flex-wrap: wrap;
+    padding: 10px;
     font-size: 16px;
     margin-bottom: 10px;
     color: white;
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
 
+.header { 
+  justify-self: flex-start;
+  font-size: 30px; 
+  margin-right: 60px;
+  color: lightblue;
+
+}
+
 .nav-item { 
-    
-    height: 100%;
+
     cursor: pointer;
     margin-left: 30px;
     padding: 20px;
     font-weight: bold;
+
 }
 .nav-item:hover { 
     color: #fb8500;
@@ -47,24 +53,9 @@ body {
     color: white; 
 } 
 
-.header { 
-    position: absolute;
-    left: 2%;
-    font-size: 30px; 
-    padding-left: 10px;
-}
 
-@media (max-width: 1024px) {
-    .header {
-    display: none;
-    }
-  }
 
-ul { 
-    display: flex;
-    justify-content: center; 
-    align-items: center;
-}
+
 
 .nav-link {
     position: relative;

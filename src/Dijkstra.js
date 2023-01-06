@@ -86,16 +86,16 @@ function getNeighbors(grid, node, colSize, rowSize) {
   const col = node[1];
   const wall = grid[row][col].isWall;
 
-  if (row > 0 && (wall === false)) {
+  if (row > 0 && grid[row - 1][col].isWall === false) {
     neighbors.push([row - 1, col]);
   }
-  if (row < (colSize - 1) && (wall === false)) {
+  if (row < (colSize - 1) && grid[row + 1][col].isWall === false) {
     neighbors.push([row + 1, col]);
   }
-  if (col > 0 && (wall === false)){ 
+  if (col > 0 && grid[row][col - 1].isWall === false){ 
     neighbors.push([row, col - 1]);
   }
-  if (col < (rowSize - 1) && (wall === false)) {
+  if (col < (rowSize - 1) && grid[row][col + 1].isWall === false) {
     neighbors.push([row, col + 1]);
   }
   return neighbors;

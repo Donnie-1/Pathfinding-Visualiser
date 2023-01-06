@@ -42,7 +42,7 @@ export function DFS(grid, startNode, endNode, colSize, rowSize) {
     // Start the search from the start node
     visit(startNode);
 
-    return visitedNodes;
+    return [visitedNodes, visitedNodes];
   }
   function getNeighbors(grid, node, colSize, rowSize) {
     const neighbors = [];

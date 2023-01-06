@@ -1,33 +1,52 @@
 
-.grid-parent { 
-  display: flex;
-  align-items: center;
-  justify-content: center;
+:root { 
+  --width: 28px
 }
 
 .grid { 
   display: grid;
-  grid-template-columns: repeat(50, 1fr);
-  grid-template-rows: repeat(50);
+  grid-template-columns: repeat(60, minmax(10px, 1fr));
+  grid-template-rows: repeat(60);
+  border-collapse: collapse;
+  max-width: 1700px;
 }
 
 .cell { 
-  width: 30px;
-  height: 30px;
+  max-width: var(--width);
+  height: var(--width);
   background-color: #EDF2F4;
   outline: 1px solid lightblue;
   display: flex;
-  align-items: center;
-  justify-content: center;
 }
   
 .wall { 
-  width: 30px;
-  height: 30px;
+  height: var(--width);
   outline: 1px solid lightblue;;
   transition: background-color 0.5s ease-out;;
   animation: grow 5s forwards;
   background-color: black;
+}
+
+.startNode,
+.endNode {
+  width: 1.5vw;
+  max-width: var(--width);
+  height: var(--width);
+  background-color: #EDF2F4;
+  outline: 1px solid lightblue;
+  font-size: min(1vw, 20px);
+  background-image: url('./images/target.png');
+  background-position: center;
+  background-size: 25px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.startNode { 
+  background-image: url('./images/arrow.png');
+  background-size: 20px;
+  background-repeat: no-repeat;
 }
 
 .wall:before {
@@ -43,8 +62,7 @@
 
 
 .path { 
-  width: 30px;
-  height: 30px;
+  height: var(--width);
   outline: 1px solid lightblue;
   background-color: yellow;
   display: flex;
@@ -53,12 +71,11 @@
 }
 
 .visitedPath { 
-outline: 1px solid lightblue;
-width: 30px;
-height: 30px;
-display: flex;
-align-items: center;
-justify-content: center;
+  outline: 1px solid lightblue;
+  height:var(--width);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .visitedNodePurple{
   background-position: center;

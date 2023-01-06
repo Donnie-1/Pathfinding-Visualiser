@@ -5,7 +5,6 @@ import { useState } from 'react';
 import "./Nav.css"
 export function Nav(props) {
   const [selectedAlgorithm, setSelectedAlgorithm] = useState('');
-  const [selectedMaze, setSelectedMaze] = useState('');
 
   function handleOptionChange(option) {
     setSelectedAlgorithm(option);
@@ -33,52 +32,47 @@ export function Nav(props) {
   }
 
   return (
-    <div className="outer-nav">
       <div className='nav-bar'>
       <div className='header'>Path Finder Visualiser</div>
-      <ul>
 
       <Dropdown className='nav-item' title="Algorithms" items={["Dijkstra", 'DFS', 'Bi-Directional BFS']} 
       selectedAlgorithm={selectedAlgorithm} onAlgoChange={handleOptionChange} />
       
-      <li 
-        className='nav-item gen'
-        data-button="1"
-        onClick={HandleClick}>
-          Generate Random Maze
-      </li>
-        
         <li 
-          className='nav-item play-button'
-          data-button="2"
+          className='nav-item gen'
+          data-button="1"
           onClick={HandleClick}>
-            Visualise {selectedAlgorithm}
-				</li>
-        
+            Generate Random Maze
+        </li>
+          
+          <li 
+            className='nav-item play-button'
+            data-button="2"
+            onClick={HandleClick}>
+              Visualise {selectedAlgorithm}
+          </li>
+          
 
-        <li 
+          <li 
+            className='nav-item'
+            onClick={reset}>
+            Reset
+          </li>
+
+          <li 
           className='nav-item'
-          onClick={reset}>
-          Reset
+          data-button="3"
+          onClick={HandleClick}> 
+          Clear Walls
         </li>
 
         <li 
-        className='nav-item'
-        data-button="3"
-        onClick={HandleClick}> 
-        Clear Walls
-      </li>
+          className='nav-item'
+          data-button="4"
+          onClick={HandleClick}
+          >Clear Path
+        </li> 
 
-      <li 
-        className='nav-item'
-        data-button="4"
-        onClick={HandleClick}
-        >Clear Path
-      </li>
-        
-    </ul>
-    </div>
-    <Ledger />
     </div>
   )
 }

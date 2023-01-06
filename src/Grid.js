@@ -1,27 +1,35 @@
-import { useState } from 'react';
+import { useState  } from 'react';
 import "./Grid.css"; 
 import {shortestPath} from './Dijkstra.js'; 
 import {Nav} from './Nav.js'; 
 import {DFS} from './DFS.js';
 import {bidirectionalShortestPath} from './bidirectionalBFS.js';
+import {generateMaze} from './Maze.js';
 
 
-function Cell (props, {value}) {
-
+function Cell (props) {
+  let value = false;
+  let className = "cell";
+  // Set start
   if (props.row === props.startNode[0] && props.col === props.startNode[1]) {
-    value =  String.fromCharCode(9654)
+    value =  true;
+    className = "startNode"
   }
+
+  // Set end
   if (props.row === props.endNode[0] && props.col === props.endNode[1]) {
-    value = String.fromCharCode(9726);
+    value =  true; 
+    className = "endNode"
   }
 
   return (
-    <div
+  
+  <div
       style={props.style}
-      className={props.className}                                      // isWall, isVisited, isPath
+      className={value ? className : props.className}                                      // isWall, isVisited, isPath
       onMouseOver={() => { props.updateNode(props.row, props.col, "wall", [true, false, false]) }}
-      onMouseDown={() => { props.onMouseDown() }}
-      onMouseUp={() => { props.onMouseUp() }}
+      onMouseDown={props.onMouseDown}
+      onMouseUp={ props.onMouseUp}
     >
       {value}
     </div>
@@ -29,10 +37,10 @@ function Cell (props, {value}) {
 };
 
 function Grid() {
-  const rowSize = 50; 
-  const colSize = 50;
-  const startNode = [10, 25];
-  const endNode = [40, 25];
+  const rowSize = 60; 
+  const colSize = 60;
+  const startNode = [10, 30];
+  const endNode = [50, 30];
 
   const [grid, setGrid] = useState(() => {
     return Array(colSize)
@@ -47,19 +55,25 @@ function Grid() {
       }));
   });
 
+  const [pathActive, setPathActive] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
+
   function updateNode(row, col, className, nodeType) {
     if  (row === startNode[0] && col === startNode[1] || 
         row === endNode[0] && col === endNode[1]) {
       return; 
     }
- 
+    let mazeFlag = false; 
+    if (className === "maze wall" || className === "maze") {
+      mazeFlag = true;
+    }
 
-    if  (isHolding || nodeType[1]) {  
+    if (isHolding || nodeType[1] || mazeFlag) {  
       setGrid(() => {
         const newGrid = grid.slice();
         newGrid[row][col] = {
           className: `${className}`,
-          isWall: nodeType[0],
+          isWall: mazeFlag,
           isVisited: nodeType[1], 
           isPath: nodeType[2], 
         };
@@ -78,66 +92,115 @@ function Grid() {
     setIsHolding(false);
   }
 
-  const array = [[0,0]]; 
+  // Highlight algorithm process 
   function highlightVisited(visitedNodes) { 
-
     for (let i = 0; i < visitedNodes.length; i++) {
       const [row, col] = visitedNodes[i];
-      if (grid[row][col].isWall) {
-        continue;
-      }
-      if (row === endNode[0] && col === endNode[1]) { 
-        break; 
-      }
 
-      array.push([row, col]);
       setTimeout(() => {
-        
         updateNode(row, col, "visitedPath visitedNodePurple", [false, true, false]);
       }, 5*i);
-    
     }
-    return; 
   }
-  
+
+  // Highlight (shortest) path
   function highlightPath(path) { 
     for (let i = 0; i < path.length; i++) {
       const [row, col] = path[i];
   
       setTimeout(() => {
-          updateNode(row, col, "path", [false, true, true]);
+        updateNode(row, col, "path", [false, true, true]);
           
       }, 20 * i);
-    
     }
-    return; 
+  }
+
+  function highlightWall(walls) {
+    if (isAnimating) {
+      return
+    }
+
+    resetWalls(false);
+    setIsAnimating(true);
+    
+    for (let i = 0; i < walls.length; i++) {
+      const [row, col] = walls[i];
+      if (row >= rowSize || col >= colSize) {
+        continue;
+      }
+
+      setTimeout(() => {
+        updateNode(row, col, "maze wall", [true, false, false]);
+      }, 2*i);
+
+      setTimeout(() => {
+        setIsAnimating(false);
+      }, walls.length * 2);
+
+    }
+  }
+
+  function resetWalls(clearPath) { 
+    for (let i = 0; i < rowSize; i++) {
+      for (let j = 0; j < colSize; j++) {
+        if (clearPath) { 
+          if (grid[i][j].isPath || grid[i][j].isVisited) {  
+            updateNode(i, j, "cell", [false, true, false]);
+          }
+        } else if (grid[i][j].isWall && clearPath === false) {
+          updateNode(i, j, "cell", [false, true, false]);
+        }
+      }
+    }
   }
   
-  function highlightShortestPath() {
-    
-    //const [path, b] =  shortestPath(grid, startNode, endNode, colSize, rowSize)
-    const [visitedNodes, path] = bidirectionalShortestPath(grid, startNode, endNode, colSize, rowSize); 
+  function selectPath(algorithm) {
+    let visitedNodes = []; 
+    let path = []; 
+    if (algorithm === "Dijkstra") {
+      [path, visitedNodes] = shortestPath(grid, startNode, endNode, colSize, rowSize);
+    } else if (algorithm === "DFS") {
+      [path, visitedNodes] = DFS(grid, startNode, endNode, colSize, rowSize);
+    } else if (algorithm === "Bi-Directional BFS") {
+      [path, visitedNodes] = bidirectionalShortestPath(grid, startNode, endNode, colSize, rowSize); 
+    }
 
     if (path === null){
       alert("No path found");
       return;
     }
-    highlightVisited(visitedNodes, path);
+
+    highlightVisited(visitedNodes);
     setTimeout(() => {
       highlightPath(path);
-    }, visitedNodes.length * 5);
+    }, (visitedNodes.length) * 5);
+  }
+
+  function handleClick(event) {
+    if (event.length === 0) { 
+      alert("Select an Algorithm! ");
+    } else if (event === "maze") {  
+      let visitedNodes = generateMaze(rowSize, colSize);
+      highlightWall(visitedNodes);
+    } else if (event === "ClearWalls") {
+      resetWalls(false);
+    } else if (event === "ClearPath") {
+      resetWalls(true);
+    } else { 
+      selectPath(event); 
+    }
   }
 
   return (
     <>
-    <Nav onClick={highlightShortestPath} />
+    <Nav onClick={handleClick} />
     <div className ='grid-parent'>
       <div className = 'grid'>
         {grid.map((row, rowIndex) => (
           <div key={rowIndex}>
             {row.map((cell, colIndex) => (
-              <Cell
 
+              <Cell
                 key={colIndex}
                 row={rowIndex}
                 col={colIndex}
@@ -149,8 +212,8 @@ function Grid() {
                 updateNode={updateNode}
                 onMouseDown={handleMouseDown}
                 onMouseUp={handleMouseUp}
-
               />
+
             ))}
           </div>
         ))}
@@ -160,6 +223,4 @@ function Grid() {
   );
 };
 
-
 export default Grid;
-
