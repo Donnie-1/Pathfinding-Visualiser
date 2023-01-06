@@ -1,9 +1,9 @@
 import { useState  } from 'react';
 import "./Grid.css"; 
-import {shortestPath} from './Dijkstra.js'; 
+import {shortestPath} from './algorithms/Dijkstra.js'; 
 import {Nav} from './Nav.js'; 
-import {DFS} from './DFS.js';
-import {bidirectionalShortestPath} from './bidirectionalBFS.js';
+import {DFS} from './algorithms/DFS.js';
+import {bidirectionalShortestPath} from './algorithms/bidirectionalBFS.js';
 import {generateMaze} from './Maze.js';
 
 
