@@ -1,6 +1,5 @@
 export function DFS(grid, startNode, endNode, colSize, rowSize) {
     const visitedNodes = []  
-    const visitedNodes2 = []  
   
     // Initialize the unvisited nodes set
     const unvisitedNodes = [[]];

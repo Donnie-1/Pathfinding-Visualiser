@@ -1,11 +1,13 @@
 import {shortestPath} from './Dijkstra.js'; 
 
-export function bidirectionalShortestPath(grid, startNode, endNode, colSize, rowSize) {
-    const [path, dead] = shortestPath(grid, startNode, endNode, colSize, rowSize);
+export function bidirectionalShortestPath(grid, startNode, endNode, colSize, rowSize, mazeActive) {
+    const arr = shortestPath(grid, startNode, endNode, colSize, rowSize);
+    const path = arr[0]; 
     const midPoint = path[Math.floor(path.length/2)];
     const visitedNodes = []  
     const visitedNodesSource = []
     const visitedNodesEnd = []
+
   // Initialize the distances and previous nodes for each cell
   const distances1 = Array(colSize)
     .fill(null)
@@ -29,10 +31,7 @@ export function bidirectionalShortestPath(grid, startNode, endNode, colSize, row
       unvisitedNodesEnd.add([row, col]);
     }
   }
-
-  let startFlag = false; 
-  let endFlag = false;
- 
+  
   // Iterate over the unvisited nodes until all nodes have been visited or the search meets in the middle
   while (unvisitedNodesStart.size > 0 && unvisitedNodesEnd.size > 0) {
     // Find the node with the minimum distance for the forward search
@@ -64,13 +63,15 @@ export function bidirectionalShortestPath(grid, startNode, endNode, colSize, row
       // Remove the nodes from the unvisited nodes sets
     unvisitedNodesStart.delete(minDistanceNodeStart);
     unvisitedNodesEnd.delete(minDistanceNodeEnd);
-    
-    for(let i of visitedNodesSource) { 
-      for(let j of visitedNodesEnd) { 
-        if (i[0] === j[0] && i[1] === j[1]) {
-          console.log(i)
-          return [path, visitedNodes]
-        } 
+   
+
+    if (mazeActive) { 
+      for(let i of visitedNodesSource) { 
+        for(let j of visitedNodesEnd) { 
+          if (i[0] === j[0] && i[1] === j[1]) {
+            return [path, visitedNodes]
+          } 
+        }
       }
     }
 
@@ -84,6 +85,8 @@ export function bidirectionalShortestPath(grid, startNode, endNode, colSize, row
         visitedNodesSource.push(neighbor);
         visitedNodes.push(neighbor);
 
+  
+
         const distance = distances1[minDistanceNodeStart[0]][minDistanceNodeStart[1]] + 1;
         if (
           distance < distances1[neighbor[0]][neighbor[1]] &&
@@ -92,6 +95,8 @@ export function bidirectionalShortestPath(grid, startNode, endNode, colSize, row
           distances1[neighbor[0]][neighbor[1]] = distance;
         }
       }
+
+
       
       // Update the distances and previous nodes for the neighboring nodes in the backward search
       if (minDistanceNodeEnd === null) {
@@ -106,6 +111,11 @@ export function bidirectionalShortestPath(grid, startNode, endNode, colSize, row
         visitedNodesEnd.push(neighbor);
         visitedNodes.push(neighbor);
 
+
+        if (neighbor[0] === midPoint[0] && neighbor[1] === midPoint[1] && mazeActive === false) { 
+          return [path, visitedNodes]
+        }
+
         const distance = distances2[minDistanceNodeEnd[0]][minDistanceNodeEnd[1]] + 1;
         if (
           distance < distances2[neighbor[0]][neighbor[1]] &&
@@ -114,7 +124,6 @@ export function bidirectionalShortestPath(grid, startNode, endNode, colSize, row
           distances2[neighbor[0]][neighbor[1]] = distance;
         }
       }
-
     }
     return [path, visitedNodes]
 }

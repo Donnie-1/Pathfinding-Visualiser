@@ -41,6 +41,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  background-repeat: no-repeat;
+
 }
 
 .startNode { 
@@ -70,6 +72,37 @@
   justify-content: center;
 }
 
+.path{
+  animation-name: pathAnimation;
+  animation-duration: 0.3s;
+  animation-timing-function: ease-out;
+  animation-delay: 0;
+  animation-direction: alternate;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+  animation-play-state: running;
+  outline: 1px solid #FFE134;
+}
+
+@keyframes pathAnimation {
+  0% {
+    transform: scale(.3);
+    background-color: #FE5A1C;
+  }
+
+  50% {
+    transform: scale(1.2);
+    background-color: #FF9E28;
+  }
+
+  100% {
+    transform: scale(1.0);
+    background-color: #FFE134;
+  }
+}
+
+
+
 .visitedPath { 
   outline: 1px solid lightblue;
   height:var(--width);
@@ -77,6 +110,7 @@
   align-items: center;
   justify-content: center;
 }
+
 .visitedNodePurple{
   background-position: center;
   background-repeat: no-repeat;
@@ -111,7 +145,35 @@
   100% {
     transform: scale(1.0);
     background-color: rgba(178, 67, 255, 0.75);
+  }
+}
 
 
+.wall{
+  animation-name: wallAnimation;
+  animation-duration: 0.3s;
+  animation-timing-function: ease-out;
+  animation-delay: 0;
+  animation-direction: alternate;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+  animation-play-state: running;
+  outline: 1px solid #14213d;
+}
+
+@keyframes wallAnimation {
+  0% {
+    transform: scale(.3);
+    background-color: #14213d;
+  }
+
+  50% {
+    transform: scale(1.2);
+    background-color: #14213d;
+  }
+
+  100% {
+    transform: scale(1.0);
+    background-color: #14213d;
   }
 }

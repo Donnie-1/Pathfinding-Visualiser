@@ -15,8 +15,6 @@ export function generateMaze(rowSize, colSize) {
   
   let visited = [[startRow, startCol]];
   
-  let visitedCount = 1;
-  
   while (visited.length > 0) {
     let posIndex = Math.floor(Math.random() * visited.length);
     let pos = visited[posIndex];
@@ -35,7 +33,6 @@ export function generateMaze(rowSize, colSize) {
       
       grid[neighborRow][neighborCol] = 0;
       visited.push([neighborRow, neighborCol]);
-      visitedCount++;
     } else {
       visited.splice(posIndex, 1);
     }

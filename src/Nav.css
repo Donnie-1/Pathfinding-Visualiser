@@ -121,6 +121,7 @@ body {
 
 .ledger { 
     display: flex; 
+    flex-wrap: wrap;
     justify-content: space-around;
     align-items: center;
     margin: 20px;
@@ -134,8 +135,8 @@ body {
 }
 
 .ledger-wall { 
-    width: 30px;
-    height: 30px;
+    width: 28px;
+    height: 28px;
     outline: 1px solid lightblue;;
     background-color: black;
     margin-right: 10px;     

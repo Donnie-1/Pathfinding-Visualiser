@@ -1,7 +1,6 @@
 import React from 'react'
 import { useState } from 'react';
 
-
 import "./Nav.css"
 export function Nav(props) {
   const [selectedAlgorithm, setSelectedAlgorithm] = useState('');
@@ -32,6 +31,7 @@ export function Nav(props) {
   }
 
   return (
+    <>
       <div className='nav-bar'>
       <div className='header'>Path Finder Visualiser</div>
 
@@ -74,6 +74,8 @@ export function Nav(props) {
         </li> 
 
     </div>
+    <Ledger/>
+    </>
   )
 }
 
@@ -93,9 +95,9 @@ function Dropdown(props) {
 
   return (
     <li onClick={handleClick}>
-      <a href="#" className={className}>{props.title} 
+      <div className={className}>{props.title} 
         <span className='arrow'></span>
-      </a>
+      </div>
       {isOpen && (
         <div 
           className="dropdown-content" 
@@ -105,15 +107,13 @@ function Dropdown(props) {
         >
 
           {props.items.map(item => (
-            <a 
-              href="#" 
+            <div 
               className="drop-item" 
               onClick={ () => {handleClick(item); handleChange(item)}} 
               value={item}
               key={item}>
-                
               {item}
-            </a>
+            </div>
           ))}
         </div>
       )}
@@ -124,8 +124,12 @@ function Dropdown(props) {
 function Ledger() { 
   return (
     <div className='ledger'>
-      <div className='ledger-item'>▶ Start node </div>
-      <div className='ledger-item'>◾ End node </div>
+      <div className='ledger-item'> 
+      <div className='startNode' style={{outline: "none", paddingRight: "5px"}}></div>
+      Start node </div>
+      <div className='ledger-item'> 
+      <div className='endNode' style={{outline: "none", paddingRight: "5px"}}></div>
+      End node </div>
       <div className='ledger-item'>
         <div className='ledger-wall'></div>
         Wall</div>

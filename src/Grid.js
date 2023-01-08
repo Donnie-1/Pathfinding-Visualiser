@@ -1,4 +1,4 @@
-import { useState  } from 'react';
+import React, { useState }  from 'react';
 import "./Grid.css"; 
 import {shortestPath} from './algorithms/Dijkstra.js'; 
 import {Nav} from './Nav.js'; 
@@ -27,7 +27,7 @@ function Cell (props) {
   <div
       style={props.style}
       className={value ? className : props.className}                                      // isWall, isVisited, isPath
-      onMouseOver={() => { props.updateNode(props.row, props.col, "wall", [true, false, false]) }}
+      onMouseOver={() => { props.updateNode(props.row, props.col, "wall", [true, false, false], false) }}
       onMouseDown={props.onMouseDown}
       onMouseUp={ props.onMouseUp}
     >
@@ -39,8 +39,8 @@ function Cell (props) {
 function Grid() {
   const rowSize = 60; 
   const colSize = 60;
-  const startNode = [10, 30];
-  const endNode = [50, 30];
+  const startNode = [13, 30];
+  const endNode = [47, 30];
 
   const [grid, setGrid] = useState(() => {
     return Array(colSize)
@@ -55,25 +55,24 @@ function Grid() {
       }));
   });
 
-  const [pathActive, setPathActive] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [mazeActive, setMazeActive] = useState(false);
 
-  function updateNode(row, col, className, nodeType) {
-    if  (row === startNode[0] && col === startNode[1] || 
-        row === endNode[0] && col === endNode[1]) {
+  function updateNode(row, col, className, nodeType, isAnimation) {
+    if  ((row === startNode[0] && col === startNode[1]) || 
+        (row === endNode[0] && col === endNode[1])) {
       return; 
     }
-    let mazeFlag = false; 
-    if (className === "maze wall" || className === "maze") {
-      mazeFlag = true;
+    if (isHolding && isAnimating) {
+      return; 
     }
 
-    if (isHolding || nodeType[1] || mazeFlag) {  
+    if (isHolding || isAnimation) {  
       setGrid(() => {
         const newGrid = grid.slice();
         newGrid[row][col] = {
           className: `${className}`,
-          isWall: mazeFlag,
+          isWall: nodeType[0],
           isVisited: nodeType[1], 
           isPath: nodeType[2], 
         };
@@ -94,13 +93,21 @@ function Grid() {
 
   // Highlight algorithm process 
   function highlightVisited(visitedNodes) { 
+    resetWalls(true);
+    setIsAnimating(true);
+
     for (let i = 0; i < visitedNodes.length; i++) {
       const [row, col] = visitedNodes[i];
 
       setTimeout(() => {
-        updateNode(row, col, "visitedPath visitedNodePurple", [false, true, false]);
+        updateNode(row, col, "visitedPath visitedNodePurple", [false, true, false], true);
       }, 5*i);
+
+      setTimeout(() => {
+        setIsAnimating(false);
+      }, visitedNodes.length * 5);
     }
+
   }
 
   // Highlight (shortest) path
@@ -109,7 +116,7 @@ function Grid() {
       const [row, col] = path[i];
   
       setTimeout(() => {
-        updateNode(row, col, "path", [false, true, true]);
+        updateNode(row, col, "path", [false, true, true], true);
           
       }, 20 * i);
     }
@@ -120,6 +127,7 @@ function Grid() {
       return
     }
 
+    setMazeActive(true);
     resetWalls(false);
     setIsAnimating(true);
     
@@ -130,7 +138,7 @@ function Grid() {
       }
 
       setTimeout(() => {
-        updateNode(row, col, "maze wall", [true, false, false]);
+        updateNode(row, col, "maze wall", [true, false, false], true);
       }, 2*i);
 
       setTimeout(() => {
@@ -141,20 +149,25 @@ function Grid() {
   }
 
   function resetWalls(clearPath) { 
+
     for (let i = 0; i < rowSize; i++) {
       for (let j = 0; j < colSize; j++) {
         if (clearPath) { 
           if (grid[i][j].isPath || grid[i][j].isVisited) {  
-            updateNode(i, j, "cell", [false, true, false]);
+            updateNode(i, j, "cell", [false, true, false], true);
           }
         } else if (grid[i][j].isWall && clearPath === false) {
-          updateNode(i, j, "cell", [false, true, false]);
+          setMazeActive(false);
+          updateNode(i, j, "cell", [false, true, false], true);
         }
       }
     }
   }
   
   function selectPath(algorithm) {
+    if(isAnimating) {
+      return 
+    }
     let visitedNodes = []; 
     let path = []; 
     if (algorithm === "Dijkstra") {
@@ -162,7 +175,7 @@ function Grid() {
     } else if (algorithm === "DFS") {
       [path, visitedNodes] = DFS(grid, startNode, endNode, colSize, rowSize);
     } else if (algorithm === "Bi-Directional BFS") {
-      [path, visitedNodes] = bidirectionalShortestPath(grid, startNode, endNode, colSize, rowSize); 
+      [path, visitedNodes] = bidirectionalShortestPath(grid, startNode, endNode, colSize, rowSize, mazeActive); 
     }
 
     if (path === null){

@@ -84,7 +84,6 @@ function getNeighbors(grid, node, colSize, rowSize) {
   const neighbors = [];
   const row = node[0];
   const col = node[1];
-  const wall = grid[row][col].isWall;
 
   if (row > 0 && grid[row - 1][col].isWall === false) {
     neighbors.push([row - 1, col]);
