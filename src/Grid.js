@@ -39,7 +39,7 @@ function Cell (props) {
 function Grid() {
   const rowSize = 60; 
   const colSize = 60;
-  const startNode = [13, 30];
+  const startNode = [39, 30];
   const endNode = [47, 30];
 
   const [grid, setGrid] = useState(() => {
@@ -193,6 +193,7 @@ function Grid() {
     if (event.length === 0) { 
       alert("Select an Algorithm! ");
     } else if (event === "maze") {  
+      resetWalls(true);
       let visitedNodes = generateMaze(rowSize, colSize);
       highlightWall(visitedNodes);
     } else if (event === "ClearWalls") {
