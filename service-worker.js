@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "/Pathfinding-Visualiser/precache-manifest.dea789785d8050a3c4695f71b35c5e8d.js"
+  "/Pathfinding-Visualiser/precache-manifest.21e3353b66cd8a338352bd46c08b836e.js"
 );
 
 workbox.clientsClaim();
