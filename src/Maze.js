@@ -8,8 +8,9 @@ export function generateMaze(rowSize, colSize) {
     grid.push(currentRow);
   }
   
-  let startRow = 10
-  let startCol = 10
+
+  let startRow = 0
+  let startCol = 0
   
   grid[startRow][startCol] = 0;
   

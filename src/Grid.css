@@ -1,14 +1,14 @@
 
 :root { 
-  --width: 28px
+  --width : 1.5vw;
 }
 
 .grid { 
   display: grid;
-  grid-template-columns: repeat(60, minmax(10px, 1fr));
-  grid-template-rows: repeat(60);
+  grid-template-columns: repeat(60, 1.5vw);
+  grid-template-rows: repeat(65, 1.5vw);
   border-collapse: collapse;
-  max-width: 1700px;
+  max-width: 1300px;
 }
 
 .cell { 
@@ -29,8 +29,7 @@
 
 .startNode,
 .endNode {
-  width: 1.5vw;
-  max-width: var(--width);
+  width:var(--width);
   height: var(--width);
   background-color: #EDF2F4;
   outline: 1px solid lightblue;
@@ -57,7 +56,6 @@
   left: 50%;
   transform: translate(-50%, -50%) scale(0);  
   border-radius: 50%;  
-  background-color: black; 
   transition: transform 0.5s ease-in-out;  
   animation: grow 5s forwards;
 }

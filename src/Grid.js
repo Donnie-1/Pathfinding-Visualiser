@@ -37,10 +37,16 @@ function Cell (props) {
 };
 
 function Grid() {
-  const rowSize = 60; 
+  let rowSize = 60; 
+  let startNode = [13, 30];
+  let endNode = [47, 30];
+
+  if (window.innerHeight < 800) { 
+    startNode = [13, 13];
+    endNode = [47, 13];
+    rowSize = 26; 
+  }
   const colSize = 60;
-  const startNode = [13, 30];
-  const endNode = [47, 30];
 
   const [grid, setGrid] = useState(() => {
     return Array(colSize)
@@ -101,11 +107,11 @@ function Grid() {
 
       setTimeout(() => {
         updateNode(row, col, "visitedPath visitedNodePurple", [false, true, false], true);
-      }, 5*i);
+      }, 3*i);
 
       setTimeout(() => {
         setIsAnimating(false);
-      }, visitedNodes.length * 5);
+      }, visitedNodes.length * 3);
     }
 
   }
@@ -130,12 +136,8 @@ function Grid() {
     setMazeActive(true);
     resetWalls(false);
     setIsAnimating(true);
-    
     for (let i = 0; i < walls.length; i++) {
       const [row, col] = walls[i];
-      if (row >= rowSize || col >= colSize) {
-        continue;
-      }
 
       setTimeout(() => {
         updateNode(row, col, "maze wall", [true, false, false], true);
@@ -150,8 +152,8 @@ function Grid() {
 
   function resetWalls(clearPath) { 
 
-    for (let i = 0; i < rowSize; i++) {
-      for (let j = 0; j < colSize; j++) {
+    for (let i = 0; i < colSize; i++) {
+      for (let j = 0; j < rowSize; j++) {
         if (clearPath) { 
           if (grid[i][j].isPath || grid[i][j].isVisited) {  
             updateNode(i, j, "cell", [false, true, false], true);
@@ -186,15 +188,15 @@ function Grid() {
     highlightVisited(visitedNodes);
     setTimeout(() => {
       highlightPath(path);
-    }, (visitedNodes.length) * 5);
+    }, (visitedNodes.length) * 3);
   }
 
   function handleClick(event) {
     if (event.length === 0) { 
       alert("Select an Algorithm! ");
     } else if (event === "maze") {  
-      resetWalls(true);
-      let visitedNodes = generateMaze(rowSize, colSize);
+      //resetWalls(true);
+      let visitedNodes = generateMaze(colSize, rowSize);
       highlightWall(visitedNodes);
     } else if (event === "ClearWalls") {
       resetWalls(false);
