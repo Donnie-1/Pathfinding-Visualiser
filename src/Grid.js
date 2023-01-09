@@ -36,15 +36,6 @@ function Cell (props) {
   );
 };
 
-
-/*
-  let navbarHeight = document.getElementById("navbarDiv").clientHeight;
-  let textHeight = document.getElementById("mainText").clientHeight + document.getElementById("algorithmDescriptor").clientHeight;
-  let height = Math.floor((document.documentElement.clientHeight - navbarHeight - textHeight) / 28);
-  let width = Math.floor(document.documentElement.clientWidth / 25);
-
-*/
-
 function Grid() {
   let x = Math.floor(document.documentElement.clientWidth / 28.5) ;
   let y = Math.floor(document.documentElement.clientHeight / 33) ;
@@ -60,13 +51,8 @@ function Grid() {
     gridRef.current.style.setProperty('grid-template-rows', `${y}`);
   }, []);
 
-  
-
-
   let colSize = x;
   let rowSize = y; 
-
-
 
   let startNode = [x - (x - 8), Math.floor(y/2)];
   let endNode = [x - 8, Math.floor(y/2)];
