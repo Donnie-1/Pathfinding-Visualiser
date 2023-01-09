@@ -16,7 +16,7 @@ self.__precacheManifest = [
     "url": "/Pathfinding-Visualiser/static/js/runtime~main.43514da7.js"
   },
   {
-    "revision": "4e21e6506d4fac60e0a28d9eda6e4fb1",
+    "revision": "e785430a71db7b9e0788069f2cbdbe27",
     "url": "/Pathfinding-Visualiser/index.html"
   }
 ];
