@@ -65,7 +65,7 @@ export function bidirectionalShortestPath(grid, startNode, endNode, colSize, row
     unvisitedNodesEnd.delete(minDistanceNodeEnd);
    
 
-    if (mazeActive || rowSize === 20) { 
+    if (mazeActive) { 
       for(let i of visitedNodesSource) { 
         for(let j of visitedNodesEnd) { 
           if (i[0] === j[0] && i[1] === j[1]) {
@@ -112,9 +112,9 @@ export function bidirectionalShortestPath(grid, startNode, endNode, colSize, row
         visitedNodes.push(neighbor);
 
 
-        if (neighbor[0] === midPoint[0] && neighbor[1] === midPoint[1] && mazeActive === false) { 
-          return [path, visitedNodes]
-        }
+        // if (neighbor[0] === midPoint[0] && neighbor[1] === midPoint[1] && mazeActive === false) { 
+        //   return [path, visitedNodes]
+        // }
 
         const distance = distances2[minDistanceNodeEnd[0]][minDistanceNodeEnd[1]] + 1;
         if (

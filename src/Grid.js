@@ -62,7 +62,7 @@ function Grid() {
 
   
 
-  console.log(x,y);
+
   let colSize = x;
   let rowSize = y; 
 
