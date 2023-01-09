@@ -1,4 +1,4 @@
-import React, { useState }  from 'react';
+import React, { useState,  useRef, useEffect }  from 'react';
 import "./Grid.css"; 
 import {shortestPath} from './algorithms/Dijkstra.js'; 
 import {Nav} from './Nav.js'; 
@@ -36,17 +36,40 @@ function Cell (props) {
   );
 };
 
-function Grid() {
-  let rowSize = 60; 
-  let startNode = [13, 30];
-  let endNode = [47, 30];
 
-  if (window.innerHeight < 800) { 
-    startNode = [13, 13];
-    endNode = [47, 13];
-    rowSize = 26; 
+/*
+  let navbarHeight = document.getElementById("navbarDiv").clientHeight;
+  let textHeight = document.getElementById("mainText").clientHeight + document.getElementById("algorithmDescriptor").clientHeight;
+  let height = Math.floor((document.documentElement.clientHeight - navbarHeight - textHeight) / 28);
+  let width = Math.floor(document.documentElement.clientWidth / 25);
+
+*/
+
+function Grid() {
+  let x = Math.floor(document.documentElement.clientWidth / 28.5) ;
+  let y = Math.floor(document.documentElement.clientHeight / 33) ;
+  const gridRef = useRef(null);
+  
+
+  if (x > 60) { 
+    x = 60;
   }
-  const colSize = 60;
+
+  useEffect(() => {
+    gridRef.current.style.setProperty('grid-template-columns', `${x}, 1fr`);
+    gridRef.current.style.setProperty('grid-template-rows', `${y}`);
+  }, []);
+
+  
+
+  console.log(x,y);
+  let colSize = x;
+  let rowSize = y; 
+
+
+
+  let startNode = [x - (x - 8), Math.floor(y/2)];
+  let endNode = [x - 8, Math.floor(y/2)];
 
   const [grid, setGrid] = useState(() => {
     return Array(colSize)
@@ -211,7 +234,7 @@ function Grid() {
     <>
     <Nav onClick={handleClick} />
     <div className ='grid-parent'>
-      <div className = 'grid'>
+      <div className = 'grid' ref={gridRef}>
         {grid.map((row, rowIndex) => (
           <div key={rowIndex}>
             {row.map((cell, colIndex) => (
