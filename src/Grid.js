@@ -39,7 +39,7 @@ function Cell (props) {
 function Grid() {
   const rowSize = 60; 
   const colSize = 60;
-  const startNode = [39, 30];
+  const startNode = [13, 30];
   const endNode = [47, 30];
 
   const [grid, setGrid] = useState(() => {
