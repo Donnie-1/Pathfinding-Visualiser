@@ -46,6 +46,7 @@ function Grid() {
     x = 60;
   }
 
+  // sets grid size based on window size
   useEffect(() => {
     gridRef.current.style.setProperty('grid-template-columns', `${x}, 1fr`);
     gridRef.current.style.setProperty('grid-template-rows', `${y}`);
@@ -125,7 +126,7 @@ function Grid() {
 
   }
 
-  // Highlight (shortest) path
+  // Highlight *shortest path
   function highlightPath(path) { 
     for (let i = 0; i < path.length; i++) {
       const [row, col] = path[i];
